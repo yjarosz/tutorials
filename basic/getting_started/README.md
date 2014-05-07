@@ -6,35 +6,60 @@ Copyright (c) 2014 [Sebastien Varrette](mailto:<Sebastien.Varrette@uni.lu>) [www
         Time-stamp: <Mar 2014-05-06 12:06 svarrette>
 
 -------------------
+**Table of Contents**
 
+- [UL HPC Tutorial: Getting Started](#user-content-ul-hpc-tutorial-getting-started)
+	- [Convention](#user-content-convention)
+	- [Platform overview.](#user-content-platform-overview)
+- [Connecting for the first time and preparing your SSH environment](#user-content-connecting-for-the-first-time-and-preparing-your-ssh-environment)
+		- [Step 1a: Connect to UL HPC (Linux / Mac OS / Unix)](#user-content-step-1a-connect-to-ul-hpc-linux--mac-os--unix)
+		- [Step 1b: Connect to UL HPC (Windows)](#user-content-step-1b-connect-to-ul-hpc-windows)
+	- [Step 2: configure your SSH environment on all clusters](#user-content-step-2-configure-your-ssh-environment-on-all-clusters)
+	- [Step 2bis: Using SSH proxycommand setup to access the clusters despite port filtering](#user-content-step-2bis-using-ssh-proxycommand-setup-to-access-the-clusters-despite-port-filtering)
+- [Discovering, visualizing and reserving UL HPC resources](#user-content-discovering-visualizing-and-reserving-ul-hpc-resources)
+	- [Step 1: the working environment](#user-content-step-1-the-working-environment)
+	- [Step 2: web monitoring interfaces](#user-content-step-2-web-monitoring-interfaces)
+	- [Step 3: Reserving resources with OAR: the basics](#user-content-step-3-reserving-resources-with-oar-the-basics)
+	- [Step 4: Job management](#user-content-step-4-job-management)
+		- [Hierarchical filtering of resources](#user-content-hierarchical-filtering-of-resources)
+		- [Using OAR properties](#user-content-using-oar-properties)
+		- [Reserving specific resources bigsmpand bigmem](#user-content-reserving-specific-resources-bigsmpand-bigmem)
+		- [OAR Containers](#user-content-oar-containers)
+		- [Reservation at a given period of time](#user-content-reservation-at-a-given-period-of-time)
+	- [Step 5: Using modules](#user-content-step-5-using-modules)
+	- [Step 6 (advanced): Job management and Persistent Terminal Sessions using GNU Screen](#user-content-step-6-advanced-job-management-and-persistent-terminal-sessions-using-gnu-screen)
+		- [Pre-requisite: screen configuration file ~/.screenrc](#user-content-pre-requisite-screen-configuration-file-screenrc)
+		- [Basic commands](#user-content-basic-commands)
+		- [Sample Usage on the UL HPC platform: Kernel compilation](#user-content-sample-usage-on-the-ul-hpc-platform-kernel-compilation)
 # UL HPC Tutorial: Getting Started
 
 This tutorial will guide you through your first steps on the
-[UL HPC platform](http://hpc.uni.lu).  
+[UL HPC platform](http://hpc.uni.lu).
 
-Before proceeding: 
+-------------------
+Before proceeding:
 
 * make sure you have an account (if not, follow [this procedure](https://hpc.uni.lu/get_an_account)), and an SSH client.
 * take a look at the [quickstart guide](https://hpc.uni.lu/users/getting_started.html)
-* ensure you operate from a Linux / Mac environement. Most commands below assumes running in a Terminal in this context. If you're running Windows, you can use Putty tools etc. as described [on this page](https://hpc.uni.lu/users/docs/access.html#installing-ssh-on-windows) yet it's probably better that you familiarize "natively" with Linux-based environment by having a Linux Virtual Machine (consider for that [VirtualBox](https://www.virtualbox.org/)). 
+* ensure you operate from a Linux / Mac environement. Most commands below assumes running in a Terminal in this context. If you're running Windows, you can use Putty tools etc. as described [on this page](https://hpc.uni.lu/users/docs/access.html#installing-ssh-on-windows) yet it's probably better that you familiarize "natively" with Linux-based environment by having a Linux Virtual Machine (consider for that [VirtualBox](https://www.virtualbox.org/)).
 
-From a general perspective, the [Support page](https://hpc.uni.lu/users/docs/report_pbs.html) describes how to get help during your UL HPC usage. 
+From a general perspective, the [Support page](https://hpc.uni.lu/users/docs/report_pbs.html) describes how to get help during your UL HPC usage.
 
 ## Convention
 
-In the below tutorial, you'll proposed terminal commands where the prompt is denoted by `$>`. 
+In the below tutorial, you'll proposed terminal commands where the prompt is denoted by `$>`.
 
-In general, we will prefix to precise the execution context (_i.e._ your laptop, a cluster frontend or a node). Remember that `#` character is a comment. Example: 
+In general, we will prefix to precise the execution context (_i.e._ your laptop, a cluster frontend or a node). Remember that `#` character is a comment. Example:
 
-		# This is a comment 
+		# This is a comment
 		$> hostname
 
 		(laptop)$> hostname         # executed from your personal laptop / workstation
 
 		(access-gaia)$> hostname    # executed from access server of the Gaia cluster
- 
 
-## Platform overview. 
+
+## Platform overview.
 
 You can find a brief overview of the platform with key characterization numbers [on this page](https://hpc.uni.lu/systems/overview.html).
 
@@ -53,7 +78,7 @@ The way SSH handles the keys and the configuration files is illustrated in the f
 
 ![SSH key management](https://hpc.uni.lu/images/docssh/schema.png)
 
-In order to be able to login to the clusters, you have sent us through the Account request form the **public key** (i.e. `id_dsa.pub`, `id_rsa.pub` or the **public key** as saved by PuttY) you initially generated, enabling us to configure the `~/.ssh/authorized_keys` file of your account.  
+In order to be able to login to the clusters, you have sent us through the Account request form the **public key** (i.e. `id_dsa.pub`, `id_rsa.pub` or the **public key** as saved by PuttY) you initially generated, enabling us to configure the `~/.ssh/authorized_keys` file of your account.
 
 
 ### Step 1a: Connect to UL HPC (Linux / Mac OS / Unix)
@@ -62,11 +87,11 @@ Run the following commands in a terminal (substituting *yourlogin* with the logi
 
         (laptop)$> ssh -p 8022 yourlogin@access-chaos.uni.lu
 
-If you want to connect to the gaia cluster, 
+If you want to connect to the gaia cluster,
 
         (laptop)$> ssh -p 8022 yourlogin@access-gaia.uni.lu
 
-Now you probably want to avoid taping this long command to connect to the platform. You can customize SSH aliases for that. Edit the file `~/.ssh/config` (create it if it does not already exist) and adding the following entries: 
+Now you probably want to avoid taping this long command to connect to the platform. You can customize SSH aliases for that. Edit the file `~/.ssh/config` (create it if it does not already exist) and adding the following entries:
 
         Host chaos-cluster
             Hostname access-chaos.uni.lu
@@ -79,13 +104,13 @@ Now you probably want to avoid taping this long command to connect to the platfo
             Port 8022
             ForwardAgent no
 
-Now you shall be able to issue the following (simpler) command to connect to the cluster and obtain the welcome banner: 
+Now you shall be able to issue the following (simpler) command to connect to the cluster and obtain the welcome banner:
 
 		(laptop)$> ssh gaia-cluster
 
 		(laptop)$> ssh chaos-cluster
 
-In the sequel, we assume these aliases to be defined. 
+In the sequel, we assume these aliases to be defined.
 
 ### Step 1b: Connect to UL HPC (Windows)
 
@@ -102,33 +127,33 @@ In the sequel, we assume these aliases to be defined.
   * Go back to `Category:Session` and click on "Save"
   * Click on "Open"
 
-		
+
 ## Step 2: configure your SSH environment on all clusters
 
-The SSH key you provided us secure your connection __from__ your laptop (or personal workstation) __to__ the cluster frontends. It is thus important to protect them by a passphrase. 
+The SSH key you provided us secure your connection __from__ your laptop (or personal workstation) __to__ the cluster frontends. It is thus important to protect them by a passphrase.
 
-You shall have also a new key pair configured in your account to permit a bi-directional transparent connection from one cluster to the other (you can check that in your `~/.ssh/authorized_keys` and by successfully running: 
+You shall have also a new key pair configured in your account to permit a bi-directional transparent connection from one cluster to the other (you can check that in your `~/.ssh/authorized_keys` and by successfully running:
 
 		(access-gaia)$> ssh chaos-cluster
 
-or 
+or
 
 		(access-chaos)$> ssh gaia-cluster
 
-If that's the case, you can ignore the rest of this section. 
-*Otherwise*, you will now have to configure a passphrase-free SSH key pair to permit a transparent connection from one cluster to another. 
+If that's the case, you can ignore the rest of this section.
+*Otherwise*, you will now have to configure a passphrase-free SSH key pair to permit a transparent connection from one cluster to another.
 
 
-* Connect to the `chaos` cluster: 
+* Connect to the `chaos` cluster:
 
 		(laptop)$> ssh chaos-cluster
-		
+
 * generate a new SSH key pair with `ssh-keygen` (leave the passphrase empty):
 
 		(access-chaos)$> ssh-keygen -t dsa
 		Generating public/private dsa key pair.
-		Enter file in which to save the key (/home/users/yourlogin/.ssh/id_dsa): 
-		Enter passphrase (empty for no passphrase): 
+		Enter file in which to save the key (/home/users/yourlogin/.ssh/id_dsa):
+		Enter passphrase (empty for no passphrase):
 		Your identification has been saved in /home/users/yourlogin/.ssh/id_dsa.
 		Your public key has been saved in /home/users/yourlogin/.ssh/id_dsa.pub.
 		The key fingerprint is:
@@ -148,17 +173,17 @@ If that's the case, you can ignore the rest of this section.
 
 * authorize the newly generated public key to be used during challenge/response authentication:
 
-		(access-chaos)$> cat ~/.ssh/id_dsa.pub 
+		(access-chaos)$> cat ~/.ssh/id_dsa.pub
 		ssh-dss AAAAB[...]B2== yourlogin@access.chaos-cluster.uni.lux
 		(access-chaos)$> cat ~/.ssh/id_dsa.pub  >> ~/.ssh/authorized_keys
-		
-  * you can check that it works by connecting to localhost: 
-  
+
+  * you can check that it works by connecting to localhost:
+
   		(access-chaos)$> ssh -p 8022 localhost
   		[...]
   		(access-chaos)$> exit   # or CTRL-D
-  		
-* add an alias to facilitate the connection to each cluster by adding the following SSH configuration entry in the file `~/.ssh/config`: 
+
+* add an alias to facilitate the connection to each cluster by adding the following SSH configuration entry in the file `~/.ssh/config`:
 
 		Host gaia-cluster chaos-cluster
     		User yourlogin
@@ -168,10 +193,10 @@ If that's the case, you can ignore the rest of this section.
     		Hostname access-gaia.uni.lu
 		Host chaos-cluster
     		Hostname access-chaos.uni.lu
-  		
-You'll have to setup the same key package on the gaia cluster such that you can then work indefferently on one or another cluster. It's also the occasion to learn how to add a new SSH key to your authorized key portfolio. 
 
-* Open another terminal and connect to the gaia cluster 
+You'll have to setup the same key package on the gaia cluster such that you can then work indefferently on one or another cluster. It's also the occasion to learn how to add a new SSH key to your authorized key portfolio.
+
+* Open another terminal and connect to the gaia cluster
 
 		(laptop)$> ssh gaia-cluster
 
@@ -180,15 +205,15 @@ You'll have to setup the same key package on the gaia cluster such that you can 
 		(access-gaia)$> vim ~/.ssh/authorized_keys
 
 
-* go back to the terminal where you're connected on chaos, you shall now be able to connect to gaia, and reversely: 
+* go back to the terminal where you're connected on chaos, you shall now be able to connect to gaia, and reversely:
 
 		(access-chaos)$> ssh gaia
 		[...]
 		(access-gaia)$> exit     # or CRTL-D
-		
+
 You have a different home directory on each UL HPC site, so you will usually use Rsync or scp to move data around (see [transfering files tutorials](https://hpc.uni.lu/users/docs/filetransfer.html)).
 
-Now that we are able to connect __from__ chaos __to__ gaia, we will transfer the SSH keys and configuration in place from chaos and check that we can connnect back: 
+Now that we are able to connect __from__ chaos __to__ gaia, we will transfer the SSH keys and configuration in place from chaos and check that we can connnect back:
 
 		(access-chaos)$> scp ~/.ssh/id_dsa* gaia:.ssh/
 		(access-chaos)$> scp ~/.ssh/config  gaia:.ssh/
@@ -198,11 +223,11 @@ Now that we are able to connect __from__ chaos __to__ gaia, we will transfer the
 		(access-chaos)$> exit     # or CRTL-D
 		(access-gaia)$>  exit     # or CRTL-D
 
-So now **we have setup a bi-directional transparent connection from one cluster to the other.** 
+So now **we have setup a bi-directional transparent connection from one cluster to the other.**
 
 ## Step 2bis: Using SSH proxycommand setup to access the clusters despite port filtering
 
-It might happen that the port 8022 is filtered from your working place. You can easily bypass this firewall rule using an SSH proxycommand to setup transparently multi-hop connexions *through* one host (a gateway) to get to the access frontend of the cluster, as depited below: 
+It might happen that the port 8022 is filtered from your working place. You can easily bypass this firewall rule using an SSH proxycommand to setup transparently multi-hop connexions *through* one host (a gateway) to get to the access frontend of the cluster, as depited below:
 
      [laptop] -----||--------> 22 [SSH gateway] ---------> 8022 [access-{chaos,gaia}]
                 firewall
@@ -211,7 +236,7 @@ The gateway can be any SSH server which have access to the access frontend of th
 
 * create an entry to be able to connect to the gateway:
 
-		# Alias for the gateway (not really needed, but convenient), below instanciated 
+		# Alias for the gateway (not really needed, but convenient), below instanciated
 		Host gw
 		    User anotherlogin
 		    Hostname host.domain.org
@@ -224,42 +249,42 @@ The gateway can be any SSH server which have access to the access frontend of th
 * ensure you can connect to the gateway:
 
 		(laptop)$> ssh gw
-		(gateway)$> exit # or CTRL-D 
-		
-* the `.ulhpc` suffix we mentionned in the previous configuration is an arbitrary suffix you will now specify in your command lines in order to access the UL HPC platform via the gateway as follows: 
+		(gateway)$> exit # or CTRL-D
+
+* the `.ulhpc` suffix we mentionned in the previous configuration is an arbitrary suffix you will now specify in your command lines in order to access the UL HPC platform via the gateway as follows:
 
 		(laptop)$> ssh gaia.ulhpc
 
 # Discovering, visualizing and reserving UL HPC resources
 
-In the sequel, replace `<login>` in the proposed commands with you login on the platform (ex: `svarrette`).   
+In the sequel, replace `<login>` in the proposed commands with you login on the platform (ex: `svarrette`).
 
-## Step 1: the working environment 
+## Step 1: the working environment
 
 * [reference documentation](http://hpc.uni.lu/users/docs/env.html)
 
 After a successful login onto one of the access node (see [Cluster Access](https://hpc.uni.lu/users/docs/access.html)), you end into your personal homedir `$HOME` which is shared over NFS between the access node and the computing nodes.
 
-Again, remember that your homedir is placed on __separate__ NFS servers on each site, which __ARE NOT SYNCHRONIZED__: data synchronization between each of them remain at your own responsability. We will see below that the UL HPC team prepared for you a script to facilitate the transfer of data between each site. 
+Again, remember that your homedir is placed on __separate__ NFS servers on each site, which __ARE NOT SYNCHRONIZED__: data synchronization between each of them remain at your own responsability. We will see below that the UL HPC team prepared for you a script to facilitate the transfer of data between each site.
 
-Otherwise, you have to be aware of at least two directories: 
+Otherwise, you have to be aware of at least two directories:
 
-* `$HOME`: your home directory under NFS. 
+* `$HOME`: your home directory under NFS.
 * `$SCRATCH`: a non-backed up area put if possible under Lustre for fast I/O operations
 
-Your homedir is under a regular backup policy. Therefore you are asked to pay attention to your disk usage __and__ the number of files you store there. 
+Your homedir is under a regular backup policy. Therefore you are asked to pay attention to your disk usage __and__ the number of files you store there.
 
 * estimate file space usage and summarize disk usage of each FILE, recursively for directories using the `ncdu` command:
 
 		(access)$> ncdu
-		
-* you shall also pay attention to the number of files in your homedirectory. You can count them as follows: 
+
+* you shall also pay attention to the number of files in your homedirectory. You can count them as follows:
 
 		(access)$> find . -type f | wc -l
 
-## Step 2: web monitoring interfaces 
+## Step 2: web monitoring interfaces
 
-Each cluster offers a set of web services to monitore the platform usage: 
+Each cluster offers a set of web services to monitore the platform usage:
 
 * A [pie-chart overview of the platform usage](https://hpc.uni.lu/status/overview.html)
 * [Monika](https://hpc.uni.lu/status/monika.html), the visualization interface of the OAR scheduler, which  display the status of the clusters as regards the jobs running on the platform.
@@ -275,26 +300,26 @@ Each cluster offers a set of web services to monitore the platform usage:
 
 * it permits to schedule jobs for users on the cluster resource
 * a _OAR resource_ corresponds to a node or part of it (CPU/core)
-* a _OAR job_ is characterized by an execution time (walltime) on a set of resources. 
-  There exists two types of jobs: 
+* a _OAR job_ is characterized by an execution time (walltime) on a set of resources.
+  There exists two types of jobs:
   * _interactive_: you get a shell on the first reserve node
-  * _passive_: classical batch job where the script passed as argument to `oarsub` is executed **on the first reserved node** 
+  * _passive_: classical batch job where the script passed as argument to `oarsub` is executed **on the first reserved node**
 
-We will now see the basic commands of OAR. 
+We will now see the basic commands of OAR.
 
 * Connect to one of the UL HPC  frontend. You can request resources in interactive mode:
 
-		(access)$> oarsub -I 
+		(access)$> oarsub -I
 
   Notice that with no parameters, oarsub gave you one resource (one core) for two hour. You were also directly connected to the node you reserved with an interactive shell.
-  No exit the reservation: 
-  
+  No exit the reservation:
+
         (node)$> exit      # or CTRL-D
-  
-  When you run exit, you are disconnected and your reservation is terminated. 
-  
-To avoid anticipated termination of your jobs in case or errors (terminal closed by mistake), 
-you can reserve and connect in 2 steps using the job id associated to your reservation. 
+
+  When you run exit, you are disconnected and your reservation is terminated.
+
+To avoid anticipated termination of your jobs in case or errors (terminal closed by mistake),
+you can reserve and connect in 2 steps using the job id associated to your reservation.
 
 * First run a passive job _i.e._ run a predefined command -- here `sleep 10d` to delay the execution for 10 days -- on the first reserved node:
 
@@ -302,45 +327,45 @@ you can reserve and connect in 2 steps using the job id associated to your reser
 		[ADMISSION RULE] Set default walltime to 7200.
 		[ADMISSION RULE] Modify resource description with type constraints
 		OAR_JOB_ID=919309
- 
+
   You noticed that you received a job ID (in the above example: `919309`), which you can later use to connect to the reserved resource(s):
- 
+
         (access)$> oarsub -C 919309        # adapt the job ID accordingly ;)
         Connect to OAR job 919309 via the node e-cluster1-13
 		[OAR] OAR_JOB_ID=919309
 		[OAR] Your nodes are:
-      		e-cluster1-13*1		
-        
+      		e-cluster1-13*1
+
 		(e-cluster1-13)$> java -version
 		(e-cluster1-13)$> hostname -f
 		(e-cluster1-13)$> whoami
 		(e-cluster1-13)$> env | grep OAR   # discover environment variables set by OAR
 		(e-cluster1-13)$> exit             # or CTRL-D
 
-**Question: At which moment the job `919309` will end?** 
+**Question: At which moment the job `919309` will end?**
 
 a. after 10 days
 b. after 2 hours
-c. never, only when I'll delete the job  
+c. never, only when I'll delete the job
 
 **Question: manipulate the `$OAR_NODEFILE` variable over the command-line to extract the following information, once connected to your job**
 
-a. the list of hostnames where a core is reserved (one per line) 
+a. the list of hostnames where a core is reserved (one per line)
    * _hint_: `man cat`
 b. number of reserved cores (one per line)
    * _hint_: `man wc` --  use `wc -l` over the pipe `|` command
 c. number of reserved nodes (one per line)
    * _hint_: `man uniq` -- use `uniq` over the pipe `|` command
 d. number of cores reserved per node together with the node name (one per line)
-   * Example of output: 
-    	
+   * Example of output:
+
     	    12 gaia-11
     	    12 gaia-15
-    
+
    * _hint_: `man uniq` -- use `uniq -c` over the pipe `|` command
 e. **(for geeks)** output the number of reserved nodes times number of cores per node
    * Example of output:
-   
+
 	        gaia-11*12
 	        gaia-15*12
 
@@ -352,14 +377,14 @@ Normally, the previously run job is still running.
 
 * You can check the status of your running jobs using `oarstat` command:
 
-		(access)$> oarstat      # access all jobs 
+		(access)$> oarstat      # access all jobs
 		(access)$> oarstat -u   # access all your jobs
-		
+
   Then you can delete your job by running `oardel` command:
 
 		(access)$> oardel 919309
-		
-		
+
+
 * you can see your consumption (in an historical computational measure named _CPU hour_ i.e. the work done by a CPU in one hour of wall clock time) over a given time period using `oarstat --accounting "YYYY-MM-DD, YYYY-MM-DD" -u <youlogin>`:
 
 		(access)$> oarstat --accounting "2013-01-01, 2013-12-31" -u <login>
@@ -368,23 +393,23 @@ Normally, the previously run job is still running.
 
 In all remaining examples of reservation in this section, remember to delete the reserved jobs afterwards (using `oardel` or `CTRL-D`)
 
-You probably want to use more than one core, and you might want them for a different duration than two hours. 
+You probably want to use more than one core, and you might want them for a different duration than two hours.
 The `-l` switch allows you to pass a comma-separated list of parameters specifying the needed resources for the job.
 
-* Reserve interactively 4 cores for 6 hours (delete the job afterwards) 
+* Reserve interactively 4 cores for 6 hours (delete the job afterwards)
 
 		(access)$> oarsub -I -l core=6,walltime=6
 
 
-* Reserve interactively 2 nodes for 3h15 (delete the job afterwards): 
+* Reserve interactively 2 nodes for 3h15 (delete the job afterwards):
 
 		(access)$> oarsub -I -l nodes=3,walltime=3:15
 
 ### Hierarchical filtering of resources
 
-OAR features a very powerful resource filtering/matching engine able to specify resources in a **hierarchical**  way using the `/` delimiter. The resource property hierarchy is as follows: 
+OAR features a very powerful resource filtering/matching engine able to specify resources in a **hierarchical**  way using the `/` delimiter. The resource property hierarchy is as follows:
 
-		enclosure -> nodes -> cpu -> core 
+		enclosure -> nodes -> cpu -> core
 
 
 *  Reserve interactively 2 cores on 3 different nodes belonging to the same enclosure (**total: 6 cores**) for 3h15:
@@ -392,11 +417,11 @@ OAR features a very powerful resource filtering/matching engine able to specify 
 		(access)$> oarsub -I -l /enclosure=1/nodes=3/core=2,walltime=3:15
 
 
-* Reserve interactively two full nodes belonging to the different enclosure for 6 hours: 
+* Reserve interactively two full nodes belonging to the different enclosure for 6 hours:
 
 		(access)$> oarsub -I -l /enclosure=2/nodes=1,walltime=6
 
-**Question: reserve interactively 2 cpus on 2 nodes belonging to the same enclosure for 4 hours**  
+**Question: reserve interactively 2 cpus on 2 nodes belonging to the same enclosure for 4 hours**
 
 **Question: in the following statements, explain the advantage and drawback (in terms of latency/bandwidth etc.) of each of the proposed approaches**
 
@@ -405,7 +430,7 @@ b. `oarsub -I -l /enclosure=1/nodes=2` vs `oarsub -I -l nodes=2` vs `oarsub -I -
 
 ### Using OAR properties
 
-You might have notice on [Monika](https://hpc.uni.lu/status/monika.html) for each site a list of properties assigned to each resources. 
+You might have notice on [Monika](https://hpc.uni.lu/status/monika.html) for each site a list of properties assigned to each resources.
 
 The `-p` switch allows you to specialize (as an SQL syntax) the property you wish to use when selecting the resources. The syntax is as follows: `oarsub -p "< property >='< value >'"`
 
@@ -427,7 +452,7 @@ You can find the available OAR properties on the [UL HPC documentation](https://
 		(access-gaia)$> oarsub -I -l nodes=1/core=4,walltime=8 -p "gpu='yes'" -p "network_address='gaia-65'"
 
 
-**Question: reserve interactively 2 nodes among the `h-cluster1-*` nodes (_this holds only on the `chaos` cluster_) using the `nodeclass` property**  
+**Question: reserve interactively 2 nodes among the `h-cluster1-*` nodes (_this holds only on the `chaos` cluster_) using the `nodeclass` property**
 
 You can combine filters using the `+` sign.
 
@@ -451,7 +476,7 @@ You can combine filters using the `+` sign.
 
 ### Reserving specific resources `bigsmp`and `bigmem`
 
-Some nodes are very specific (for instance the nodes with 1TB of memory or the BCS subsystem of Gaia composed of 4 motherboards of 4 processors with a total of 160 cores aggregated in a ccNUMA architecture). 
+Some nodes are very specific (for instance the nodes with 1TB of memory or the BCS subsystem of Gaia composed of 4 motherboards of 4 processors with a total of 160 cores aggregated in a ccNUMA architecture).
 **Due to this specificity, they are NOT scheduled by default**  and can only be reserved with an explicit oarsub parameter: `-t bigmem` for `-t bigsmp`
 
 * reserve interactively 2 cpu on the bigsmp node belonging to the same board for 3 hours: (**total: 32 cores**)
@@ -459,16 +484,16 @@ Some nodes are very specific (for instance the nodes with 1TB of memory or the B
 		(access-gaia)$> oarsub -t bigsmp -I -l /board=1/cpu=2,walltime=3
 
 
-**Question: why are these resources not scheduled by default?**  
+**Question: why are these resources not scheduled by default?**
 
 
 ### OAR Containers
 
 With OAR, it is possible to execute jobs within another one. This functionality is called [container jobs](https://hpc.uni.lu/users/docs/oar.html#container) and is invoked using the `-t container` switch.
 
-* create a container job of 2 nodes for 4h30: 
+* create a container job of 2 nodes for 4h30:
 
-		(access)$> oarsub -t container -l nodes=2,walltime=4:30:00 "sleep 1d" 
+		(access)$> oarsub -t container -l nodes=2,walltime=4:30:00 "sleep 1d"
 		[ADMISSION RULE] Modify resource description with type and ibpool constraints
 		OAR_JOB_ID=2828112
 		(access)$> oarstat -u
@@ -477,44 +502,44 @@ This creates a kind of "tunnel" inside witch you can push subjobs using the `-t 
 
 * reserve 3 sleep jobs (of different delay) over 10 cores within the previously created container job
 
-		(access)$> oarsub -t inner=2828112 -l core=10 "sleep 3m"   # Job 1 
+		(access)$> oarsub -t inner=2828112 -l core=10 "sleep 3m"   # Job 1
 		(access)$> oarsub -t inner=2828112 -l core=10 "sleep 2m"   # Job 2
 		(access)$> oarsub -t inner=2828112 -l core=10 "sleep 1m"   # Job 3
 
 These jobs will be scheduled as follows
 
-              ^ 
-              |                        
+              ^
+              |
               +======================== ... ========================+
               |                      ^       Container Job (4h30)   |
            ^  |  +--------+----+     |                              |
-        20c|  |  |    J2  | J3 |     |24c                           | 
+        20c|  |  |    J2  | J3 |     |24c                           |
            |  |  +--------+----+     |                              |
-           v  |  |      J1     |     v                              | 
+           v  |  |      J1     |     v                              |
               +==+=============+========= ... ======================+
               |   <------><--->
               |     2min    1min
-              +--------------------------------------------------------------> time 
+              +--------------------------------------------------------------> time
 
-        
+
 **Question: Check the way your jobs have been scheduled**
 
 a. using `oarstat -u -f -j <subjob_id>` (take a look at the `assigned_resources`)
-b. using the [OAR drawgantt](https://hpc.uni.lu/status/drawgantt.html) interface  
+b. using the [OAR drawgantt](https://hpc.uni.lu/status/drawgantt.html) interface
 
 **Question: explain the interest of container jobs for the platform managers**
 
 
 ### Reservation at a given period of time
 
-You can use the `-r "YYYY-MM-DD HH:MM:SS"` option of `oarsub` to specify the date you wish the reservation to be issued. This is of particular interest for you to book in advance resources out of the working hours (at night and/or over week ends) 
+You can use the `-r "YYYY-MM-DD HH:MM:SS"` option of `oarsub` to specify the date you wish the reservation to be issued. This is of particular interest for you to book in advance resources out of the working hours (at night and/or over week ends)
 
 
 ## Step 5: Using modules
 
 [Environment Modules](http://modules.sourceforge.net/) is a software package that allows us to provide a [multitude of applications and libraries in multiple versions](http://hpc.uni.lu/users/software/) on the UL HPC platform. The tool itself is used to manage environment variables such as `PATH`, `LD_LIBRARY_PATH` and `MANPATH`, enabling the easy loading and unloading of application/library profiles and their dependencies.
 
-We will have multiple occasion to use modules in the other tutorials so there is nothing special we foresee here. You are just encouraged to read the following resources: 
+We will have multiple occasion to use modules in the other tutorials so there is nothing special we foresee here. You are just encouraged to read the following resources:
 
 * [Introduction to Environment Modules by Wolfgang Baumann](https://www.hlrn.de/home/view/System/ModulesUsage)
 * [Modules tutorial @ NERSC](https://www.nersc.gov/users/software/nersc-user-environment/modules/)
@@ -523,37 +548,37 @@ We will have multiple occasion to use modules in the other tutorials so there is
 
 ## Step 6 (advanced): Job management and Persistent Terminal Sessions using GNU Screen
 
-[GNU Screen](http://www.gnu.org/software/screen/‎) is a tool to manage persistent terminal sessions. 
+[GNU Screen](http://www.gnu.org/software/screen/‎) is a tool to manage persistent terminal sessions.
 It becomes interesting since you will probably end at some moment with the following  scenario:
 
-> you frequently program and run computations on the UL HPC platforma _i.e_ on a remote Linux/Unix computer, typically working in six different terminal logins to the access server from your office workstation, cranking up long-running computations that are still not finished and are outputting important information (calculation status or results), when you have not 2 interactive jobs running... But it's time to catch the bus and/or the train to go back home. 
+> you frequently program and run computations on the UL HPC platforma _i.e_ on a remote Linux/Unix computer, typically working in six different terminal logins to the access server from your office workstation, cranking up long-running computations that are still not finished and are outputting important information (calculation status or results), when you have not 2 interactive jobs running... But it's time to catch the bus and/or the train to go back home.
 
-Probably what you do in the above scenario is to 
+Probably what you do in the above scenario is to
 
 a. clear and shutdown all running terminal sessions
 b. once at home when the kids are in bed, you're logging in again... And have to set up the whole environment again (six logins, 2 interactive jobs etc. )
-c. repeat the following morning when you come back to the office. 
+c. repeat the following morning when you come back to the office.
 
-Enter the long-existing and very simple, but totally indispensable [GNU screen](www.gnu.org/software/screen/) command. It has the ability to completely detach running processes from one terminal and reattach it intact (later) from a different terminal login. 
+Enter the long-existing and very simple, but totally indispensable [GNU screen](www.gnu.org/software/screen/) command. It has the ability to completely detach running processes from one terminal and reattach it intact (later) from a different terminal login.
 
 ### Pre-requisite: screen configuration file `~/.screenrc`
 
-While not mandatory, we advise you to rely on our customized configuration file for screen `.screenrc` available on [Github](https://github.com/ULHPC/dotfiles/blob/master/screen/screenrc).   
+While not mandatory, we advise you to rely on our customized configuration file for screen `.screenrc` available on [Github](https://github.com/ULHPC/dotfiles/blob/master/screen/screenrc).
 Normally, you have nothing to do since we already setup this file for you in your homedir.
 Otherwise, simply clone the [ULHPC dotfile repository](https://github.com/ULHPC/dotfiles/) and make a symbolic link `~/.screenrc` targeting the file `screen/screenrc` of the repository.
 
 ### Basic commands
-	
-You can start a screen session (_i.e._ creates a single window with a shell in it) with the `screen` command.
-Its main command-lines options are listed below: 
 
-* `screen`: start a new screen 
-* `screen -ls`: does not start screen, but prints a list of `pid.tty.host` strings identifying your current screen sessions. 
+You can start a screen session (_i.e._ creates a single window with a shell in it) with the `screen` command.
+Its main command-lines options are listed below:
+
+* `screen`: start a new screen
+* `screen -ls`: does not start screen, but prints a list of `pid.tty.host` strings identifying your current screen sessions.
 * `screen -r`: resumes a detached screen session
 * `screen -x`: attach to a not detached screen session. (Multi display mode _i.e._ when you and another user are trying to access the same session at the same time)
 
 
-Once within a screen, you can invoke a screen command which consist of a "`CTRL + a`" sequence followed by one other character. The main commands are: 
+Once within a screen, you can invoke a screen command which consist of a "`CTRL + a`" sequence followed by one other character. The main commands are:
 
 * `CTRL + a c`: (create) creates a new Screen window. The default Screen number is zero.
 * `CTRL + a n`: (next) switches to the next window.
@@ -571,7 +596,7 @@ We will illustrate the usage of GNU screen by performing a compilation of a rece
 * start a new screen session
 
         (access)$> screen
-		
+
 * rename the screen window "Frontend" (using `CTRL+a A`)
 * create the directory to host the files
 
@@ -585,14 +610,14 @@ We will illustrate the usage of GNU screen by performing a compilation of a rece
 
 * detach from this screen (using `CTRL+a d`)
 * kill your current SSH connection and your terminal
-* re-open your terminal and connect back to the cluster frontend 
-* list your running screens: 
-		
+* re-open your terminal and connect back to the cluster frontend
+* list your running screens:
+
 		(access)$> screen -ls
 		There is a screen on:
 			9143.pts-0.access	(05/04/2014 11:29:43 PM) (Detached)
 		1 Socket in /var/run/screen/S-svarrette.
-		
+
 * re-attach your previous screen session
 
 		(access)$> screen -r      # OR screen -r 9143.pts-0.access (see above socket name)
@@ -611,18 +636,18 @@ We will illustrate the usage of GNU screen by performing a compilation of a rece
 		(node)$> make mrproper
 		(node)$> make alldefconfig
 		(node)$> make 2>&1 | tee /dev/shm/PS1/kernel_compile.log
-		
+
 * You can now detach from the screen and take a coffee
 
-The last compilation command make use of `tee`, a nice tool which read from standard input and write to standard output _and_ files. This permits to save in a log file the message written in the standard output. 
+The last compilation command make use of `tee`, a nice tool which read from standard input and write to standard output _and_ files. This permits to save in a log file the message written in the standard output.
 
-**Question: why using the `make 2>&1` sequence in the last command?** 
+**Question: why using the `make 2>&1` sequence in the last command?**
 
 **Question: why working in `/dev/shm` is more efficient?**
 
 
 * Reattach from time to time to your screen to see the status of the compilation
-* Your compilation is successful if it ends with the sequence: 
+* Your compilation is successful if it ends with the sequence:
 
 		[...]
 		Kernel: arch/x86/boot/bzImage is ready  (#2)
@@ -630,7 +655,7 @@ The last compilation command make use of `tee`, a nice tool which read from stan
 * Restart the compilation, this time using parallel jobs within the Makefile invocation (`-j` option of make)
 
 		(node)$> make clean
-		(node)$> time make -j `cat $OAR_NODEFILE|wc -l` 2>&1 | tee /dev/shm/PS1/kernel_compile.2.log 
+		(node)$> time make -j `cat $OAR_NODEFILE|wc -l` 2>&1 | tee /dev/shm/PS1/kernel_compile.2.log
 
 The table below should convince you to always run `make` with the `-j` option whenever you can...
 
